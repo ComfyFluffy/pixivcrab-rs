@@ -249,9 +249,20 @@ impl AppAPI {
         }
     }
 
+    pub fn illust_uploads<'a>(&'a self, user_id: &str) -> Pager<'a, illust::Response> {
+        Pager {
+            app_api: self,
+            next_url: Some(format!(
+                "{}/v1/user/illusts?user_id={}",
+                self.base_url, user_id
+            )),
+            response_type: PhantomData,
+        }
+    }
+
     pub async fn novel_bookmarks<'a>(
         &'a self,
-        user_id: i64,
+        user_id: &str,
         private: bool,
     ) -> Pager<'a, novel::Response> {
         Pager {
@@ -266,7 +277,7 @@ impl AppAPI {
         }
     }
 
-    pub async fn user_detail<'a>(&'a self, user_id: i64) -> Result<user::Response> {
+    pub async fn user_detail<'a>(&'a self, user_id: &str) -> Result<user::Response> {
         self.parse_json(
             self.send_authorized(self.client.get(format!(
                 "{}/v1/user/detail?user_id={}",

@@ -6,7 +6,7 @@ pub struct Response {
     pub user: User,
     pub profile: Profile,
     pub profile_publicity: ProfilePublicity,
-    pub workspace: BTreeMap<String, String>,
+    pub workspace: BTreeMap<String, Option<String>>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
@@ -16,6 +16,7 @@ pub struct User {
     pub account: String,
     pub profile_image_urls: ProfileImageURLs,
     pub is_followed: bool,
+    pub comment: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
