@@ -15,7 +15,7 @@ pub struct User {
     pub name: String,
     pub account: String,
     pub profile_image_urls: ProfileImageURLs,
-    pub is_followed: bool,
+    pub is_followed: Option<bool>,
     pub comment: Option<String>,
 }
 

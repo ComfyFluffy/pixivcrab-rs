@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use chrono::{DateTime, Duration, Utc};
 use models::{auth, illust, novel, user};
-use reqwest::header::HeaderMap;
+use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::de::DeserializeOwned;
 use snafu::ResultExt;
 pub mod error;
@@ -118,7 +118,11 @@ pub fn default_headers(hash_secret: &str) -> HeaderMap {
 }
 
 impl AppAPI {
-    pub fn new(auth_method: AuthMethod, language: &str) -> Result<Self> {
+    pub fn new(
+        auth_method: AuthMethod,
+        language: &str,
+        client_builder: ClientBuilder,
+    ) -> Result<Self> {
         let mut base_headers = HeaderMap::new();
         base_headers.insert(
             "Accept-Language",
@@ -129,9 +133,11 @@ impl AppAPI {
         base_headers.insert("App-Version", "7.8.16".parse().unwrap());
 
         Ok(Self {
-            client: reqwest::Client::builder()
+            client: client_builder
                 .user_agent("PixivIOSApp/7.8.16 (iOS 12.4.5; iPhone7,2)")
+                .timeout(std::time::Duration::from_secs(15))
                 .default_headers(base_headers)
+                .cookie_store(true)
                 .build()
                 .context(error::HTTP)?,
             base_url: "https://app-api.pixiv.net".to_string(),
