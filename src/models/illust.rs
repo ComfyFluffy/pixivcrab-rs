@@ -1,18 +1,13 @@
 use super::{user::User, *};
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Response {
     pub illusts: Vec<Illust>,
     pub next_url: Option<String>,
 }
+crate::impl_next_url!(Response);
 
-impl NextUrl for Response {
-    fn next_url(&self) -> Option<String> {
-        self.next_url.clone()
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Illust {
     pub id: i64,
     pub title: String,
@@ -39,12 +34,33 @@ pub struct Illust {
     pub is_muted: bool,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct MetaPage {
     pub image_urls: ImageURLs,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct MetaSinglePage {
     pub original_image_url: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+pub struct UgoiraResponse {
+    pub ugoira_metadata: UgoiraMetadata,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+pub struct UgoiraMetadata {
+    pub zip_urls: ZipUrls,
+    pub frames: Vec<Frame>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+pub struct Frame {
+    pub file: String,
+    pub delay: i32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+pub struct ZipUrls {
+    pub medium: String,
 }

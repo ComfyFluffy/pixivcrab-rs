@@ -1,11 +1,11 @@
 use super::*;
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Response {
     pub response: AuthResponse,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct AuthResponse {
     pub access_token: String,
     pub expires_in: i64,
@@ -16,7 +16,7 @@ pub struct AuthResponse {
     pub device_token: String,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct User {
     pub profile_image_urls: ProfileImageURLs,
     pub id: String,
@@ -29,14 +29,14 @@ pub struct User {
     pub require_policy_agreement: bool,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct ProfileImageURLs {
     pub px_16x16: String,
     pub px_50x50: String,
     pub px_170x170: String,
 }
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
 pub struct Form<'a> {
     pub client_id: &'a str,
     pub client_secret: &'a str,

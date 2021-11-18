@@ -18,8 +18,19 @@ pub enum AuthMethod {
 }
 
 pub trait NextUrl {
-    fn next_url(&self) -> Option<String>;
+    fn next_url(&self) -> Option<&str>;
 }
+
+macro_rules! impl_next_url {
+    ($t:ident) => {
+        impl NextUrl for $t {
+            fn next_url(&self) -> Option<&str> {
+                self.next_url.as_ref().map(|x| x.as_str())
+            }
+        }
+    };
+}
+pub(crate) use impl_next_url;
 
 #[derive(Debug)]
 pub struct Pager<'a, T>
@@ -41,7 +52,7 @@ impl<T: DeserializeOwned + NextUrl> Pager<'_, T> {
                     .await?;
                 match self.app_api.parse_json::<T>(r).await {
                     Ok(r) => {
-                        self.next_url = r.next_url();
+                        self.next_url = r.next_url().map(|x| x.to_string());
                         Ok(Some(r))
                     }
                     Err(e) => Err(e),
@@ -72,7 +83,6 @@ pub struct AppAPI {
     pub client_id: String,
     pub client_secret: String,
 
-    // TODO: this mutex...
     pub auth_url: String,
     auth: Mutex<Auth>,
 }
@@ -266,7 +276,7 @@ impl AppAPI {
         }
     }
 
-    pub async fn novel_bookmarks<'a>(
+    pub fn novel_bookmarks<'a>(
         &'a self,
         user_id: &str,
         private: bool,
@@ -283,12 +293,48 @@ impl AppAPI {
         }
     }
 
+    pub fn novel_uploads<'a>(&'a self, user_id: &str) -> Pager<'a, novel::Response> {
+        Pager {
+            app_api: self,
+            next_url: Some(format!(
+                "{}/v1/user/novel?user_id={}",
+                self.base_url, user_id
+            )),
+            response_type: PhantomData,
+        }
+    }
+
     pub async fn user_detail<'a>(&'a self, user_id: &str) -> Result<user::Response> {
         self.parse_json(
-            self.send_authorized(self.client.get(format!(
-                "{}/v1/user/detail?user_id={}",
-                self.base_url, user_id
-            )))
+            self.send_authorized(
+                self.client
+                    .get(format!("{}/v1/user/detail", self.base_url,))
+                    .query(&[("user_id", user_id)]),
+            )
+            .await?,
+        )
+        .await
+    }
+
+    pub async fn novel_text<'a>(&'a self, novel_id: &str) -> Result<novel::NovelTextResponse> {
+        self.parse_json(
+            self.send_authorized(
+                self.client
+                    .get(format!("{}/v1/novel", self.base_url))
+                    .query(&[("novel_id", novel_id)]),
+            )
+            .await?,
+        )
+        .await
+    }
+
+    pub async fn ugoira_metadata<'a>(&'a self, illust_id: &str) -> Result<illust::UgoiraResponse> {
+        self.parse_json(
+            self.send_authorized(
+                self.client
+                    .get(format!("{}/v1/ugoira/metadata", self.base_url))
+                    .query(&[("illust_id", illust_id)]),
+            )
             .await?,
         )
         .await

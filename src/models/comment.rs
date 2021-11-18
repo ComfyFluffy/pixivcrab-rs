@@ -1,18 +1,13 @@
 use super::{user::User, *};
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Response {
     pub comments: Vec<Comment>,
     pub next_url: Option<String>,
 }
+crate::impl_next_url!(Response);
 
-impl NextUrl for Response {
-    fn next_url(&self) -> Option<String> {
-        self.next_url.clone()
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Comment {
     pub id: i64,
     pub comment: String,

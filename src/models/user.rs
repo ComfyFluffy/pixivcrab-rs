@@ -1,7 +1,7 @@
 use super::*;
 use std::collections::BTreeMap;
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Response {
     pub user: User,
     pub profile: Profile,
@@ -9,7 +9,7 @@ pub struct Response {
     pub workspace: BTreeMap<String, Option<String>>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct User {
     pub id: i64,
     pub name: String,
@@ -19,12 +19,12 @@ pub struct User {
     pub comment: Option<String>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct ProfileImageURLs {
     pub medium: String,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Profile {
     pub webpage: Option<String>,
     pub gender: String,
@@ -52,7 +52,7 @@ pub struct Profile {
     pub is_using_custom_profile_image: bool,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct ProfilePublicity {
     pub gender: String,
     pub region: String,
