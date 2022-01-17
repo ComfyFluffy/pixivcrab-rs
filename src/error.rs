@@ -15,3 +15,4 @@ pub enum Error {
         code: reqwest::StatusCode,
     },
 }
+// TODO: parse error info

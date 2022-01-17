@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use tokio::sync::Mutex;
+use futures::lock::Mutex;
 
 use chrono::{DateTime, Duration, Utc};
 use models::{auth, illust, novel, user};
@@ -245,7 +245,12 @@ impl AppAPI {
     where
         T: DeserializeOwned,
     {
-        response.json::<T>().await.context(error::HTTP)
+        let status = response.status();
+        if status.is_success() {
+            response.json::<T>().await.context(error::HTTP)
+        } else {
+            error::PixivStatusCode { code: status }.fail()
+        }
     }
 
     pub fn illust_bookmarks<'a>(
@@ -320,7 +325,7 @@ impl AppAPI {
         self.parse_json(
             self.send_authorized(
                 self.client
-                    .get(format!("{}/v1/novel", self.base_url))
+                    .get(format!("{}/v1/novel/text", self.base_url))
                     .query(&[("novel_id", novel_id)]),
             )
             .await?,
