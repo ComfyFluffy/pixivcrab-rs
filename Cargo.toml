@@ -1,7 +1,12 @@
 [package]
 name = "pixivcrab"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
+license = "MIT"
+keywords = ["pixiv"]
+categories = ["api-bindings"]
+repository = "https://github.com/WOo0W/pixivcrab-rs"
+description = "A pixiv AppAPI bindings in Rust."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
