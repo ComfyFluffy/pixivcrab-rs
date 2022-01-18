@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{fmt::Debug, marker::PhantomData};
 
 use futures::lock::Mutex;
 
@@ -35,14 +35,14 @@ pub(crate) use impl_next_url;
 #[derive(Debug)]
 pub struct Pager<'a, T>
 where
-    T: DeserializeOwned + NextUrl,
+    T: DeserializeOwned + NextUrl + Debug,
 {
     app_api: &'a AppAPI,
     next_url: Option<String>,
     response_type: PhantomData<T>,
 }
 
-impl<T: DeserializeOwned + NextUrl> Pager<'_, T> {
+impl<T: DeserializeOwned + NextUrl + Debug> Pager<'_, T> {
     pub async fn next(&mut self) -> Result<Option<T>> {
         match &self.next_url {
             Some(url) => {
