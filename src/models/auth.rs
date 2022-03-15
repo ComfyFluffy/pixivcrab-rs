@@ -18,7 +18,7 @@ pub struct AuthResponse {
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct User {
-    pub profile_image_urls: ProfileImageURLs,
+    pub profile_image_urls: ProfileImageUrls,
     pub id: String,
     pub name: String,
     pub account: String,
@@ -30,7 +30,7 @@ pub struct User {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct ProfileImageURLs {
+pub struct ProfileImageUrls {
     pub px_16x16: String,
     pub px_50x50: String,
     pub px_170x170: String,

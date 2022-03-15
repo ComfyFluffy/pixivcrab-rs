@@ -12,7 +12,7 @@ pub struct Illust {
     pub id: i64,
     pub title: String,
     pub r#type: String,
-    pub image_urls: ImageURLs,
+    pub image_urls: ImageUrls,
     pub caption: String,
     pub restrict: i64,
     pub user: User,
@@ -36,7 +36,7 @@ pub struct Illust {
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct MetaPage {
-    pub image_urls: ImageURLs,
+    pub image_urls: ImageUrls,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]

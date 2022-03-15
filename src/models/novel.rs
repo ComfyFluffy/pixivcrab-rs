@@ -14,7 +14,7 @@ pub struct Novel {
     pub caption: String,
     pub restrict: i64,
     pub x_restrict: i64,
-    pub image_urls: ImageURLs,
+    pub image_urls: ImageUrls,
     pub create_date: DateTime<Utc>,
     pub tags: Vec<Tag>,
     pub page_count: i64,

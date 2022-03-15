@@ -9,7 +9,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct ImageURLs {
+pub struct ImageUrls {
     pub square_medium: Option<String>,
     pub medium: Option<String>,
     pub large: Option<String>,

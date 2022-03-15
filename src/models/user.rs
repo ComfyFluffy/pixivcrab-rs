@@ -14,13 +14,13 @@ pub struct User {
     pub id: i64,
     pub name: String,
     pub account: String,
-    pub profile_image_urls: ProfileImageURLs,
+    pub profile_image_urls: ProfileImageUrls,
     pub is_followed: Option<bool>,
     pub comment: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
-pub struct ProfileImageURLs {
+pub struct ProfileImageUrls {
     pub medium: String,
 }
 
