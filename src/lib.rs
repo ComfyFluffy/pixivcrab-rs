@@ -302,7 +302,7 @@ impl AppAPI {
         Pager {
             app_api: self,
             next_url: Some(format!(
-                "{}/v1/user/novel?user_id={}",
+                "{}/v1/user/novels?user_id={}",
                 self.base_url, user_id
             )),
             response_type: PhantomData,
