@@ -6,7 +6,7 @@ license = "MIT"
 keywords = ["pixiv"]
 categories = ["api-bindings"]
 repository = "https://github.com/WOo0W/pixivcrab-rs"
-description = "A pixiv AppAPI bindings in Rust."
+description = "A pixiv AppAPI in Rust."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -16,6 +16,7 @@ serde = { version = "1", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 md5 = "0.7"
 snafu = "0.6"
+derivative = "2"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
