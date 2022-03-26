@@ -1,5 +1,5 @@
 //! A pixiv AppAPI in Rust.
-//! 
+//!
 //! # Example
 //!
 //! ```no_run
