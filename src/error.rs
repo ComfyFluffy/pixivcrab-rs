@@ -1,7 +1,8 @@
 use snafu::Snafu;
 
 #[derive(Snafu, Debug)]
-#[snafu(visibility = "pub")]
+#[snafu(visibility(pub(crate)))]
+#[snafu(context(suffix(false)))]
 pub enum Error {
     #[snafu(display("HTTP error occurred: {}", source))]
     HTTP {
