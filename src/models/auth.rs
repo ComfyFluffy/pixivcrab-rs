@@ -24,7 +24,7 @@ pub struct User {
     pub account: String,
     pub mail_address: String,
     pub is_premium: bool,
-    pub x_restrict: i64,
+    pub x_restrict: i32,
     pub is_mail_authorized: bool,
     pub require_policy_agreement: bool,
 }
