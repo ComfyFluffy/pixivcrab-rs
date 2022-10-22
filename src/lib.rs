@@ -394,7 +394,8 @@ impl AppApi {
         if status.is_success() {
             response.json().await.context(error::HTTP)
         } else {
-            error::PixivStatusCode { code: status }.fail()
+            let text = response.text().await.context(error::HTTP)?;
+            error::UnexpectedStatus { status, text }.fail()
         }
     }
 

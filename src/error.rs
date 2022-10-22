@@ -4,16 +4,16 @@ use snafu::Snafu;
 #[snafu(visibility(pub(crate)))]
 #[snafu(context(suffix(false)))]
 pub enum Error {
-    #[snafu(display("HTTP error occurred: {}", source))]
-    HTTP {
-        source: reqwest::Error,
-    },
-    #[snafu(display("Unable to build header: {}", source))]
+    #[snafu(display("http error occurred: {source}"))]
+    HTTP { source: reqwest::Error },
+    #[snafu(display("unable to build header: {source}"))]
     HeaderParse {
         source: reqwest::header::InvalidHeaderValue,
     },
-    PixivStatusCode {
-        code: reqwest::StatusCode,
+    #[snafu(display("got unexpected response status: {status}, text: {text}"))]
+    UnexpectedStatus {
+        status: reqwest::StatusCode,
+        text: String,
     },
 }
 // TODO: parse error info
