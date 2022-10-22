@@ -1,13 +1,13 @@
 use super::{user::User, *};
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Response {
     pub novels: Vec<Novel>,
     pub next_url: Option<String>,
 }
 crate::impl_next_url!(Response);
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Novel {
     pub id: i64,
     pub title: String,
@@ -41,7 +41,7 @@ where
     Ok(T::deserialize(deserializer).ok())
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct NovelTextResponse {
     // novel_marker: NovelMarker,
     pub novel_text: String,

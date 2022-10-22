@@ -1,13 +1,13 @@
 use super::{user::User, *};
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Response {
     pub illusts: Vec<Illust>,
     pub next_url: Option<String>,
 }
 crate::impl_next_url!(Response);
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Illust {
     pub id: i64,
     pub title: String,
@@ -34,33 +34,33 @@ pub struct Illust {
     pub is_muted: bool,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct MetaPage {
     pub image_urls: ImageUrls,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct MetaSinglePage {
     pub original_image_url: Option<String>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct UgoiraResponse {
     pub ugoira_metadata: UgoiraMetadata,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct UgoiraMetadata {
     pub zip_urls: ZipUrls,
     pub frames: Vec<Frame>,
 }
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Frame {
     pub file: String,
     pub delay: i32,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct ZipUrls {
     pub medium: String,
 }
