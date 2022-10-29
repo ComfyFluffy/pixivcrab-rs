@@ -1,6 +1,6 @@
 [package]
 name = "pixivcrab"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 license = "MIT"
 keywords = ["pixiv"]
@@ -16,7 +16,7 @@ serde = { version = "1", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 md5 = "0.7"
 snafu = "0.7"
-derivative = "2"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
+dotenvy = "0.15"

@@ -11,6 +11,7 @@ crate::impl_next_url!(Response);
 pub struct Illust {
     pub id: i64,
     pub title: String,
+    /// `type` is a reserved keyword in Rust, so we use `r#type` to escape.
     pub r#type: String,
     pub image_urls: ImageUrls,
     pub caption: String,

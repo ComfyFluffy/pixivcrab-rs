@@ -5,7 +5,7 @@ use snafu::Snafu;
 #[snafu(context(suffix(false)))]
 pub enum Error {
     #[snafu(display("http error occurred: {source}"))]
-    HTTP { source: reqwest::Error },
+    Http { source: reqwest::Error },
     #[snafu(display("unable to build header: {source}"))]
     HeaderParse {
         source: reqwest::header::InvalidHeaderValue,

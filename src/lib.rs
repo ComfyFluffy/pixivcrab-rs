@@ -28,21 +28,12 @@
 //! ```
 
 use chrono::{DateTime, Duration, Utc};
-use futures::{future::BoxFuture, lock::Mutex, Future, Stream};
+use futures::lock::Mutex;
 use models::{auth, illust, novel, user};
 use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::de::DeserializeOwned;
 use snafu::ResultExt;
-use std::{
-    fmt::Debug,
-    marker::PhantomData,
-    pin::Pin,
-    sync::Arc,
-    task::{Context, Poll},
-};
-
-#[macro_use]
-extern crate derivative;
+use std::{fmt::Debug, marker::PhantomData, sync::Arc};
 
 pub mod error;
 pub mod models;
@@ -92,8 +83,7 @@ pub(crate) use impl_next_url;
 ///     }
 /// }
 /// ```
-#[derive(Derivative)]
-#[derivative(Debug)]
+#[derive(Debug)]
 pub struct Pager<T>
 where
     T: DeserializeOwned + NextUrl + Send,
@@ -101,62 +91,31 @@ where
     app_api: AppApi,
     next_url: Option<String>,
     _response_type: PhantomData<fn() -> T>,
-    #[derivative(Debug = "ignore")]
-    future: Option<BoxFuture<'static, Result<T>>>,
 }
 
 impl<T> Pager<T>
 where
     T: DeserializeOwned + NextUrl + Send,
 {
-    fn new(app_api: AppApi, next_url: String) -> Self {
+    fn new(app_api: AppApi, url: String) -> Self {
         Self {
             app_api,
-            next_url: Some(next_url),
+            next_url: Some(url),
             _response_type: PhantomData,
-            future: None,
         }
     }
-}
 
-impl<T> Stream for Pager<T>
-where
-    T: DeserializeOwned + NextUrl + Send,
-{
-    type Item = Result<T>;
-    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        loop {
-            match self.future {
-                Some(ref mut f) => {
-                    return match Pin::new(f).poll(cx) {
-                        Poll::Ready(r) => {
-                            self.future = None;
-                            match r {
-                                Ok(t) => {
-                                    self.next_url = t.next_url();
-                                    Poll::Ready(Some(Ok(t)))
-                                }
-                                Err(e) => Poll::Ready(Some(Err(e))),
-                            }
-                        }
-                        Poll::Pending => Poll::Pending,
-                    }
-                }
-                None => match self.next_url.take() {
-                    Some(next_url) => {
-                        let app_api = self.app_api.clone();
-                        self.future = Some(Box::pin(async move {
-                            let r = app_api
-                                .send_authorized(app_api.0.client.get(next_url))
-                                .await?;
-                            app_api.parse_json::<T>(r).await
-                        }));
-                    }
-                    None => {
-                        return Poll::Ready(None);
-                    }
-                },
-            }
+    pub async fn next(&mut self) -> Result<Option<T>> {
+        if let Some(ref url) = self.next_url {
+            let r = self
+                .app_api
+                .send_authorized(self.app_api.0.client.get(url))
+                .await?;
+            let r = self.app_api.parse_json::<T>(r).await?;
+            self.next_url = r.next_url();
+            Ok(Some(r))
+        } else {
+            Ok(None)
         }
     }
 }
@@ -257,7 +216,7 @@ impl Auth {
     }
 }
 
-pub fn default_headers(hash_secret: &str) -> HeaderMap {
+pub fn x_client_headers(hash_secret: &str) -> HeaderMap {
     let mut h = HeaderMap::new();
     let t = chrono::Local::now().to_rfc3339_opts(chrono::SecondsFormat::Secs, true);
     h.insert(
@@ -271,19 +230,17 @@ pub fn default_headers(hash_secret: &str) -> HeaderMap {
 }
 
 impl AppApi {
-    /// Create new instance of AppApi.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `language` is of invalid header value.
-    pub fn new(
-        auth_method: AuthMethod,
-        language: &str,
-        client_builder: ClientBuilder,
-    ) -> Result<Self> {
-        let mut config = AppApiConfig::default();
-        config.set_language(language);
-        Self::new_with_config(auth_method, client_builder, config)
+    pub fn default_client_builder() -> ClientBuilder {
+        ClientBuilder::new().cookie_store(true)
+    }
+
+    /// Create new instance of `AppApi` with default config.
+    pub fn new(auth_method: AuthMethod) -> Result<Self> {
+        Self::new_with_config(
+            auth_method,
+            Self::default_client_builder(),
+            AppApiConfig::default(),
+        )
     }
 
     pub fn new_with_config(
@@ -299,7 +256,7 @@ impl AppApi {
                 .cookie_store(true);
         }
         Ok(Self(Arc::new(AppApiInner {
-            client: client_builder.build().context(error::HTTP)?,
+            client: client_builder.build().context(error::Http)?,
             auth: Mutex::new(Auth::default()),
             auth_method,
             config,
@@ -307,7 +264,7 @@ impl AppApi {
     }
 
     pub fn headers(&self) -> HeaderMap {
-        default_headers(&self.0.config.hash_secret)
+        x_client_headers(&self.0.config.hash_secret)
     }
 
     pub async fn auth(&self) -> Result<AuthResult> {
@@ -350,10 +307,10 @@ impl AppApi {
             .form(&form)
             .send()
             .await
-            .context(error::HTTP)?
+            .context(error::Http)?
             .json::<auth::Response>()
             .await
-            .context(error::HTTP)?
+            .context(error::Http)?
             .response;
 
         auth.refresh_token = Some(r.refresh_token.clone());
@@ -383,7 +340,7 @@ impl AppApi {
                 .context(error::HeaderParse)?,
         );
 
-        request.headers(headers).send().await.context(error::HTTP)
+        request.headers(headers).send().await.context(error::Http)
     }
 
     async fn parse_json<T>(&self, response: reqwest::Response) -> Result<T>
@@ -392,9 +349,9 @@ impl AppApi {
     {
         let status = response.status();
         if status.is_success() {
-            response.json().await.context(error::HTTP)
+            response.json().await.context(error::Http)
         } else {
-            let text = response.text().await.context(error::HTTP)?;
+            let text = response.text().await.context(error::Http)?;
             error::UnexpectedStatus { status, text }.fail()
         }
     }

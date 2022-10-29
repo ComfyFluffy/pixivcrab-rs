@@ -1,12 +1,14 @@
 use super::*;
 use std::collections::BTreeMap;
 
+pub type Workspace = BTreeMap<String, Option<String>>;
+
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Response {
     pub user: User,
     pub profile: Profile,
     pub profile_publicity: ProfilePublicity,
-    pub workspace: BTreeMap<String, Option<String>>,
+    pub workspace: Workspace,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
