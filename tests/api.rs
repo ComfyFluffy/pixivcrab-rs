@@ -10,11 +10,6 @@ fn init() -> AppApi {
     .unwrap()
 }
 
-#[derive(Clone, Copy)]
-struct Ptr(*mut i32);
-
-unsafe impl Send for Ptr {}
-
 #[tokio::test]
 async fn test_auth() {
     init();
