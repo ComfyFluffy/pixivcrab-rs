@@ -88,8 +88,8 @@ pub struct Pager<T>
 where
     T: DeserializeOwned + NextUrl + Send,
 {
-    app_api: AppApi,
-    next_url: Option<String>,
+    pub app_api: AppApi,
+    pub next_url: Option<String>,
     _response_type: PhantomData<fn() -> T>,
 }
 
