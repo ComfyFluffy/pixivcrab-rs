@@ -303,7 +303,7 @@ impl AppApi {
                 }
             }
         }
-        let r = self
+        let resp = self
             .0
             .client
             .post(&self.0.config.auth_url)
@@ -311,11 +311,9 @@ impl AppApi {
             .form(&form)
             .send()
             .await
-            .context(error::Http)?
-            .json::<auth::Response>()
-            .await
-            .context(error::Http)?
-            .response;
+            .context(error::Http)?;
+
+        let r = self.parse_json::<auth::Response>(resp).await?.response;
 
         auth.refresh_token = Some(r.refresh_token.clone());
         auth.access_token = Some(r.access_token.clone());
@@ -353,7 +351,8 @@ impl AppApi {
     {
         let status = response.status();
         if status.is_success() {
-            response.json().await.context(error::Http)
+            let body = response.bytes().await.context(error::Http)?;
+            serde_json::from_slice(&body).context(error::UnexpectedJson)
         } else {
             let text = response.text().await.context(error::Http)?;
             error::UnexpectedStatus { status, text }.fail()
