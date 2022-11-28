@@ -163,6 +163,10 @@ impl AppApiConfig {
         self.base_headers.insert("Accept-Language", v);
         Ok(())
     }
+
+    pub fn set_language_header_value(&mut self, language: reqwest::header::HeaderValue) {
+        self.base_headers.insert("Accept-Language", language);
+    }
 }
 
 #[derive(Debug)]
@@ -252,10 +256,13 @@ impl AppApi {
     }
 
     pub async fn auth(&self) -> Result<AuthResult> {
+        // The `auth` is locked in the whole scope of this function to prevent
+        // multiple concurrent auth requests.
         let mut auth = self.0.auth.lock().await;
         if !auth.access_token_expired() {
             return Ok(AuthResult {
-                // Because the token is not expired, access_token and refresh_token are considered set here.
+                // The token is not expired.
+                // `access_token` and `refresh_token` should be Some.
                 access_token: auth.access_token.clone().unwrap(),
                 refresh_token: auth.refresh_token.clone().unwrap(),
                 user: auth.user.clone().unwrap(),
@@ -283,6 +290,7 @@ impl AppApi {
                 }
             }
         }
+
         let resp = self
             .0
             .client
