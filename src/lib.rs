@@ -30,7 +30,10 @@
 use chrono::{DateTime, Duration, Utc};
 use futures::lock::Mutex;
 use models::{auth, illust, novel, user};
-use reqwest::{header::HeaderMap, ClientBuilder};
+use reqwest::{
+    header::{HeaderMap, InvalidHeaderValue},
+    ClientBuilder,
+};
 use serde::de::DeserializeOwned;
 use snafu::ResultExt;
 use std::{fmt::Debug, marker::PhantomData, sync::Arc};
@@ -88,8 +91,8 @@ pub struct Pager<T>
 where
     T: DeserializeOwned + NextUrl + Send,
 {
-    pub app_api: AppApi,
     pub next_url: Option<String>,
+    app_api: AppApi,
     _response_type: PhantomData<fn() -> T>,
 }
 
@@ -172,12 +175,13 @@ impl Default for AppApiConfig {
 impl AppApiConfig {
     /// Set language used in reguest.
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `language` is of invalid header value.
-    pub fn set_language(&mut self, language: &str) {
-        self.base_headers
-            .insert("Accept-Language", language.parse().unwrap());
+    /// Error if `language` is of invalid header value.
+    pub fn set_language(&mut self, language: &str) -> std::result::Result<(), InvalidHeaderValue> {
+        let v = language.parse()?;
+        self.base_headers.insert("Accept-Language", v);
+        Ok(())
     }
 }
 
