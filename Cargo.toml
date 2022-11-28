@@ -16,6 +16,7 @@ serde = { version = "1", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 md5 = "0.7"
 snafu = "0.7"
+serde_with = "2.1.0"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

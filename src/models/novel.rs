@@ -1,4 +1,5 @@
 use super::{user::User, *};
+use serde_with::{serde_as, DefaultOnError};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Response {
@@ -7,6 +8,7 @@ pub struct Response {
 }
 crate::impl_next_url!(Response);
 
+#[serde_as]
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Novel {
     pub id: i64,
@@ -20,8 +22,8 @@ pub struct Novel {
     pub page_count: i32,
     pub text_length: i32,
     pub user: User,
-    #[serde(deserialize_with = "ok_or_none")]
-    pub series: Option<Series>, // `series` can be {}
+    #[serde_as(deserialize_as = "DefaultOnError")]
+    pub series: Option<Series>, // `series` can be {} (empty object)
     pub is_bookmarked: bool,
     pub total_bookmarks: i32,
     pub total_view: i32,
@@ -32,21 +34,13 @@ pub struct Novel {
     pub is_x_restricted: bool,
 }
 
-use serde::Deserializer;
-fn ok_or_none<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
-where
-    D: Deserializer<'de>,
-    T: Deserialize<'de>,
-{
-    Ok(T::deserialize(deserializer).ok())
-}
-
+#[serde_as]
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct NovelTextResponse {
     // novel_marker: NovelMarker,
     pub novel_text: String,
-    #[serde(deserialize_with = "ok_or_none")]
+    #[serde_as(deserialize_as = "DefaultOnError")]
     pub series_prev: Option<Novel>,
-    #[serde(deserialize_with = "ok_or_none")]
+    #[serde_as(deserialize_as = "DefaultOnError")]
     pub series_next: Option<Novel>,
 }
