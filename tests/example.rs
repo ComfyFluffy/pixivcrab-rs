@@ -1,10 +1,3 @@
-# pixivcrab
-
-A pixiv AppAPI in Rust.
-
-## Example
-
-```rust
 use pixivcrab::{AppApi, AppApiConfig, AuthMethod};
 use reqwest::ClientBuilder;
 use std::env::var;
@@ -28,4 +21,3 @@ async fn example() {
         }
     }
 }
-```

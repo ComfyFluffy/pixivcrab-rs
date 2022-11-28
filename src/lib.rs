@@ -3,23 +3,23 @@
 //! # Example
 //!
 //! ```no_run
-//! use pixivcrab::{AppApi, AuthMethod};
-//! use futures::TryStreamExt;
+//! use pixivcrab::{AppApi, AppApiConfig, AuthMethod};
+//! use reqwest::ClientBuilder;
+//! use std::env::var;
 //!
-//! #[tokio::main]
-//! async fn main() {
-//!     let api = AppApi::new(
-//!         AuthMethod::RefreshToken("your_refresh_token".to_string()),
-//!         "en",
-//!         reqwest::Client::builder(),
+//! async fn example() {
+//!     let mut config = AppApiConfig::default();
+//!     config.set_language("en-us").unwrap();
+//!     let api = AppApi::new_with_config(
+//!         AuthMethod::RefreshToken(var("PIXIV_REFRESH_TOKEN").unwrap()),
+//!         ClientBuilder::new(),
+//!         config,
 //!     )
 //!     .unwrap();
 //!     let user = api.user_detail("123456").await.unwrap();
 //!     println!("{:?}", user);
 //!     let mut pager = api.illust_bookmarks("123456", false);
-//!     // `Pager` implements `futures::Stream`.
-//!     // Import `futures::TryStreamExt` to use `try_next` method.
-//!     while let Some(r) = pager.try_next().await.unwrap() {
+//!     while let Some(r) = pager.next().await.unwrap() {
 //!         for i in r.illusts {
 //!             println!("{} {:?}", i.title, i.tags);
 //!         }
@@ -63,29 +63,9 @@ macro_rules! impl_next_url {
 }
 pub(crate) use impl_next_url;
 
-/// A [`Pager`] streams the results from `next_url`.
-/// It iterates over the pages until the `next_url` is None.
+/// A [`Pager`] iterates over the pages until the `next_url` is None.
 ///
-/// ```no_run
-/// use pixivcrab::{AppApi, AuthMethod};
-/// use futures::TryStreamExt;
-///
-/// #[tokio::main]
-/// async fn main() {
-///     let api = AppApi::new(
-///         AuthMethod::RefreshToken("your_refresh_token".to_string()),
-///         "en",
-///         reqwest::Client::builder(),
-///     )
-///     .unwrap();
-///     let mut pager = api.illust_bookmarks("123456", false);
-///     while let Some(r) = pager.try_next().await.unwrap() {
-///         for i in r.illusts {
-///             println!("{} {:?}", i.title, i.tags);
-///         }
-///     }
-/// }
-/// ```
+/// Use `pager.next()` to get the next page.
 #[derive(Debug)]
 pub struct Pager<T>
 where
