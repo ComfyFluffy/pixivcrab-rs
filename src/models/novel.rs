@@ -117,7 +117,7 @@ pub struct NovelPrevNext {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-pub struct NovelSeriesDetail1 {
+pub struct NovelSeriesDetail {
     pub caption: String,
     pub content_count: i64,
     pub display_text: String,
@@ -134,7 +134,7 @@ pub struct NovelSeriesDetail1 {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct SeriesDetail {
     pub next_url: Option<String>,
-    pub novel_series_detail: NovelSeriesDetail1,
+    pub novel_series_detail: NovelSeriesDetail,
     pub novel_series_first_novel: Novel,
     pub novel_series_latest_novel: Novel,
     pub novels: Vec<Novel>,
