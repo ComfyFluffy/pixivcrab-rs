@@ -29,3 +29,21 @@ async fn example() {
     }
 }
 ```
+
+## Get Tokens
+
+There is a script `pixiv_auth.py` in the project root. Use it to login and get access token & refresh token.
+
+Usage:
+```
+# To login
+$ python ./pixiv_auth.py login
+# Here the script opens your browser and ask you to signin.
+# Open the dev tools and navigate to Network tab, and complete the auth.
+# You should be able to find a request `pixiv://account/login?code=...&via=login`.
+# Copy the value of `code` and paste it into the terminal.
+code: <code_found_in_dev_tools>
+
+# To use refresh token to get access token
+$ python ./pixiv_auth.py refresh <your_refresh_token>
+```
