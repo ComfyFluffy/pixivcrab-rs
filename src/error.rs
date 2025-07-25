@@ -17,5 +17,7 @@ pub enum Error {
     },
     #[snafu(display("unexpected json: {source}"))]
     UnexpectedJson { source: serde_json::Error },
+    #[snafu(display("unexpected html file: {text}"))]
+    ExtractJsonFromHtml { text: String },
 }
 // TODO: parse error info
